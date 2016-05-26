@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : logback-production.xml
+    Created on : February 14, 2016, 13:24 PM
+    Author     : lawrence wamala
+    Description:
+        logging file for the production environment, this file leaves outside the application
+-->
+<configuration>
+	<!-- <include resource="org/springframework/boot/logging/logback/base.xml"/> -->
+	<property name="app.name" value="Lulimi" />
+	<property name="USER_HOME" value="/var/log" />
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d %p [%c] - &lt;%m&gt;%n</Pattern>
+        </layout>
+    </appender>
+    <!--Daily rolling file appender -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+          <File>${USER_HOME}/${app.name}/${app.name}.log</File>
+          <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <FileNamePattern>gr-${app.name}.%d{yyyy-MM-dd}.log</FileNamePattern>
+          <MaxHistory>2</MaxHistory>
+          </rollingPolicy>
+          <layout class="ch.qos.logback.classic.PatternLayout">
+          <Pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</Pattern>
+          </layout>
+    </appender> 
+ 
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.apache.openjpa" level="DEBUG"/>
+    <logger name="gr" level="ERROR"/>
+ 
+    <root level="ERROR">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="file" />
+    </root>
+</configuration>

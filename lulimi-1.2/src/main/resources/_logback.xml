@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : logback-production.xml
+    Created on : February 14, 2016, 12:55 PM
+    Author     : lawrence wamala
+    Description:
+        logging file for the production environment
+-->
+<!-- <configuration scan="true" scanPeriod="30 seconds"> -->
+<configuration>
+   <!--  <property resource="logback.properties" /> -->
+ 
+ 	<if condition='property("spring.profiles.active").contains("production")'>
+        <then>
+        	<include resource="logback-production.xml"/>
+            <!-- <include file="${USER_HOME}/${app.name}/logback-production.xml" /> -->
+        </then>
+    </if>
+    <if condition='property("spring.profiles.active").contains("development")'>
+        <then>
+            <include resource="logback-development.xml" />
+        </then>
+    </if>
+</configuration>

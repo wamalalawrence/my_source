@@ -1,0 +1,16 @@
+creating user for lulimidb
+show databases;
+switched to db lulimidb;
+db.createUser(
+    {
+      user: "adminUser",
+      pwd: "SOh3TbYhxuLiW8ypJPxmt1oOfL",
+      roles: [
+       
+      ]
+    }
+);
+
+// enable full text search on the id field
+db.englishrunyankore.createIndex({_id: "text"});
+db.englishluganda.createIndex({_id: "text"});
