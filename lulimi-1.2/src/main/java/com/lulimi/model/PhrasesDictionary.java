@@ -14,7 +14,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class PhrasesDictionary implements Serializable{
 
 	private static final long serialVersionUID = 1888898527971533156L;
-	
+
+//	@TextIndexed
 	@Id
 	private String key;
 	

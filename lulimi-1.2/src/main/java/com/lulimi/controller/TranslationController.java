@@ -61,8 +61,8 @@ public class TranslationController {
 			@PathVariable String targetLanguage, @PathVariable String sourceText) {
 		try 
 		{
-			PhrasesDictionary dictionary = translationService.findByCollectionNameAndKey(Utilities.generateCollectionName(sourceLanguage, targetLanguage), sourceText.toLowerCase());
-			if (dictionary == null) 
+			List<PhrasesDictionary> dictionaries = translationService.findTranslations(Utilities.generateCollectionName(sourceLanguage, targetLanguage), sourceText.toLowerCase());
+			if (dictionaries.isEmpty()) 
 			{
 				logger.warn(PhrasesRepository.NO_RESULT + sourceLanguage + " " + targetLanguage + " " + sourceText);
 				writeToBackLog(sourceLanguage, targetLanguage, sourceText);
@@ -70,8 +70,16 @@ public class TranslationController {
 				result.add(sourceText);
 				return new ResponseEntity<List<String>>(result, HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<List<String>>(dictionary.getValue(), HttpStatus.OK);
-		} catch (Exception e) {
+			List<String> translations = new ArrayList<String>();
+			for(PhrasesDictionary phrasesDictionary : dictionaries){
+				for(String translation : phrasesDictionary.getValue()){
+					translations.add(translation);					
+				}
+			}
+			return new ResponseEntity<List<String>>(translations, HttpStatus.OK);
+			
+		} catch (Exception e) 
+		{
 			logger.error(e);
 			return new ResponseEntity<List<String>>(HttpStatus.PRECONDITION_FAILED);
 		}
@@ -86,7 +94,7 @@ public class TranslationController {
 			phrasesLoop: 
 				for (PhrasesDictionary phrase : translation.getPhrases()) 
 				{
-					PhrasesDictionary existing = translationService.findByCollectionNameAndKey(collectionName, phrase.getKey());
+					PhrasesDictionary existing = translationService.find(collectionName, phrase.getKey());
 					if (existing != null) {
 						continue phrasesLoop;
 					}
@@ -107,7 +115,7 @@ public class TranslationController {
 		{
 			String collectionName = Utilities.generateCollectionName(translation.getSourceLanguage(), translation.getTargetLanguage());
 
-			PhrasesDictionary existing = translationService.findByCollectionNameAndKey(collectionName, oldKey);
+			PhrasesDictionary existing = translationService.find(collectionName, oldKey);
 			if (existing == null) {
 				return new ResponseEntity<Void>(HttpStatus.UNPROCESSABLE_ENTITY);
 			}
