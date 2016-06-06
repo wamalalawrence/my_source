@@ -1,6 +1,5 @@
 creating user for lulimidb
 show databases;
-switched to db lulimidb;
 db.createUser(
     {
       user: "adminUser",
