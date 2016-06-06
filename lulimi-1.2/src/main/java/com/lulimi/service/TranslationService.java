@@ -1,5 +1,8 @@
 package com.lulimi.service;
 
+/**
+ * @author wamalalawrence
+ */
 
 import java.util.List;
 
@@ -16,12 +19,16 @@ import com.lulimi.model.PhrasesDictionary;
 @Service
 public class TranslationService extends AbstractDao implements PhrasesRepository {
 
+	
 	public PhrasesDictionary find(String collectionName, String key) {
 		return mongoTemplate.findById(key, PhrasesDictionary.class, collectionName);
 	}
 	
-	public List<PhrasesDictionary> findTranslations(String collectionName, String key) {
-		// querry top 5 translations matching the key
+	/**
+	 * Find translation using mongo's full-text search capability
+	 */
+	public List<PhrasesDictionary> findWithFullTextSearch(String collectionName, String key) {
+		// query top 5 translations matching the key
 		TextCriteria criteria = TextCriteria.forDefaultLanguage().matching(key);
 		Query query = TextQuery.queryText(criteria)
 				  .sortByScore()
@@ -31,8 +38,10 @@ public class TranslationService extends AbstractDao implements PhrasesRepository
 
 	public void saveByCollectionName(String collectionName, PhrasesDictionary phrasesDictionary) {
 		mongoTemplate.save(phrasesDictionary, collectionName);
-		
 	}
 
+	public void delete(String collectionName, PhrasesDictionary phrasesDictionary) {
+		mongoTemplate.remove(phrasesDictionary, collectionName);
+	}
 
 }

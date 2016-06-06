@@ -1,5 +1,9 @@
 package com.lulimi.model;
 
+/**
+ * @author wamalalawrence
+ */
+
 import java.io.Serializable;
 import java.util.Date;
 

@@ -8,9 +8,6 @@ import org.springframework.data.annotation.Transient;
 
 public class OldTranslation implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7154769163820567896L;
 	
 	@Id
@@ -28,7 +25,7 @@ public class OldTranslation implements Serializable{
 	@Transient
 	private String targetText;
 	
-	private HashMap<String, Object> phrasesDictionary; //value will be a String or Object
+	private HashMap<String, Object> phrasesDictionary; //value can be an Object of any type
 	
 
 	public String getSourceLanguage() {

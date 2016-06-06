@@ -39,7 +39,7 @@
 		<log4j.version>1.2.13</log4j.version>
 		<mongo-java-driver.version>3.1.0</mongo-java-driver.version>
 		<cglib.version>2.2.2</cglib.version>
-		<junit.version>4.4</junit.version>
+		<junit.version>4.9</junit.version>
 		<slf4j-api.version>1.7.7</slf4j-api.version>
 		<wagon-ssh.version>1.0-beta-6</wagon-ssh.version>
 		<maven-compiler-plugin.version>2.3</maven-compiler-plugin.version>
@@ -95,7 +95,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<!-- <version>${junit.version}</version> -->
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

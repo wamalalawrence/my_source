@@ -1,5 +1,8 @@
 package com.lulimi.dao;
 
+/**
+ * @author wamalalawrence
+ */
 
 import java.util.List;
 

@@ -15,9 +15,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Locality implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3266191176999421522L;
 	
 	@Id

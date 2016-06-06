@@ -6,7 +6,9 @@ import java.util.List;
 
 
 /**
- * I need to create multiple collections from this one entity, so this document is not persistent.
+ * I need to create multiple collections from this one blue print, 
+ * so this document will not be persistent just yet.
+ * 
  * @author wamalalawrence
  *
  */

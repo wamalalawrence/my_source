@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Document   : logback-production.xml
-    Created on : February 14, 2016, 13:24 PM
     Author     : lawrence wamala
     Description:
         logging file for the production environment, this file leaves outside the application

@@ -34,34 +34,29 @@ public class TranslationController {
 	@Autowired
 	private BackLogService backLogService;
 	
-//	@Value("${app.name}")
-//	private String appName;
 
 	/**
 	 * Check if service is up
-	 * 
 	 * @return status String
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public @ResponseBody String getStatus() {
 		String statusMessage = "Lulimi service is up and running... ";
-//		if (logger.isDebugEnabled()) {
-//			logger.debug(">>>>>>>>>>>>>>>>>>>> " + appName);
-//		}
 		return statusMessage;
 	}
 
 	/**
 	 * 
 	 * @param {sourceLanguage}/{targetLanguage}/{sourceText}
-	 * @return
+	 * @return List<String> translations
+	 * gets translations
 	 */
 	@RequestMapping(value = "/translate/{sourceLanguage}/{targetLanguage}/{sourceText}", method = RequestMethod.GET)
 	public ResponseEntity<List<String>> getTranslation(@PathVariable String sourceLanguage,
 			@PathVariable String targetLanguage, @PathVariable String sourceText) {
 		try 
 		{
-			List<PhrasesDictionary> dictionaries = translationService.findTranslations(Utilities.generateCollectionName(sourceLanguage, targetLanguage), sourceText.toLowerCase());
+			List<PhrasesDictionary> dictionaries = translationService.findWithFullTextSearch(Utilities.generateCollectionName(sourceLanguage, targetLanguage), sourceText.toLowerCase());
 			if (dictionaries.isEmpty()) 
 			{
 				logger.warn(PhrasesRepository.NO_RESULT + sourceLanguage + " " + targetLanguage + " " + sourceText);
@@ -85,6 +80,12 @@ public class TranslationController {
 		}
 	}
 
+	/**
+	 * 
+	 * @param translation
+	 * @return void
+	 * Adds a new translation entry
+	 */
 	@RequestMapping(value = "/translate/", method = RequestMethod.POST)
 	public ResponseEntity<Void> addTranslation(@RequestBody Translation translation) {
 		try 
@@ -104,10 +105,16 @@ public class TranslationController {
 			logger.error(e.getMessage());
 			return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
 		}
-
 		return new ResponseEntity<Void>(HttpStatus.CREATED);
 	}
 
+	/**
+	 * 
+	 * @param oldKey
+	 * @param translation
+	 * @return void
+	 * Updates existing translation
+	 */
 	@RequestMapping(value = "/translate/{oldKey}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> updateTranslation(@PathVariable("oldKey") String oldKey,
 			@RequestBody Translation translation) {
@@ -119,10 +126,7 @@ public class TranslationController {
 			if (existing == null) {
 				return new ResponseEntity<Void>(HttpStatus.UNPROCESSABLE_ENTITY);
 			}
-			HashSet<String> wordList = new HashSet<String>(existing.getValue()); // trying
-																					// to
-																					// avoid
-																					// duplicates
+			HashSet<String> wordList = new HashSet<String>(existing.getValue()); // no duplicates
 			for (String data : existing.getValue()) {
 				wordList.add(data);
 			}
@@ -136,14 +140,45 @@ public class TranslationController {
 
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
+	
+	/**
+	 * 
+	 * @param sourceLanguage
+	 * @param targetLanguage
+	 * @param key
+	 * @return void
+	 * Deletes translation document with specified parameters
+	 */
+	@RequestMapping(value = "/translate/{sourceLanguage}/{targetLanguage}/{key}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteTranslation(
+			@PathVariable("sourceLanguage") String sourceLanguage, 
+			@PathVariable("targetLanguage") String targetLanguage,
+			@PathVariable("key") String key) {
+		try 
+		{
+			String collectionName = Utilities.generateCollectionName(sourceLanguage, targetLanguage);
+			PhrasesDictionary dictionary = new PhrasesDictionary();
+			dictionary.setKey(key);
+			translationService.delete(collectionName, dictionary);
 
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity<Void>(HttpStatus.PRECONDITION_FAILED);
+		}
+
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	/**
+	 * 
+	 * @param sourceLanguage
+	 * @param targetLanguage
+	 * @param sourceText
+	 * collects all that is not translated
+	 * keep it somewhere in a BackLog collection for reference - then we
+	 * know what to translate in the future! 
+	 */
 	private void writeToBackLog(String sourceLanguage, String targetLanguage, String sourceText) {
-		// TODO:- should we throw-up or just return same object with translation
-		// made
-		// i think i have an idea :), lets collect all that is not translated
-		// keep it somewhere in a BackLog collection for reference - then we
-		// know what to translate
-		// in the future!
 		BackLog backLog = new BackLog();
 		backLog.setSourceLanguage(sourceLanguage);
 		backLog.setTargetLanguage(targetLanguage);
